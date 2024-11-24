@@ -5,7 +5,7 @@
 #include <cstdlib>
 #include <ctime>
 
-#include "player.h"
+#include "include/player.h"
 
 std::vector<std::string> characterInfo(int character_num)
 {
@@ -15,7 +15,7 @@ std::vector<std::string> characterInfo(int character_num)
     https://stackoverflow.com/questions/14265581/parse-split-a-string-in-c-using-string-delimiter-standard-c
     */
     std::string line;
-    std::ifstream myfile("../../characters.txt");
+    std::ifstream myfile("source/txt/characters.txt");
     char counter = 0;
     std::vector<std::string> line_split = {" ", " ", " ", " ", " ", " "};
 
@@ -53,7 +53,7 @@ void printCharacters(std::vector<int> lines2print)
     https://stackoverflow.com/questions/14265581/parse-split-a-string-in-c-using-string-delimiter-standard-c
     */
     std::string line;
-    std::ifstream myfile("../../characters.txt");
+    std::ifstream myfile("source/txt/characters.txt");
     char counter = 0;
     if (myfile.is_open())
     {

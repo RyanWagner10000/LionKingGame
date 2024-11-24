@@ -3,32 +3,6 @@
 
 #include <string>
 
-// std::string getName();
-// void setName(std::string name);
-
-// int getAge();
-// void setAge(int age);
-
-// int getStrength();
-// void setStrength(int strength);
-// void addStrength(int value);
-// void subStrength(int value);
-
-// int getStamina();
-// void setStamina(int stamina);
-// void addStamina(int value);
-// void subStamina(int value);
-
-// int getWisdom();
-// void setWisdom(int wisdom);
-// void addWisdom(int value);
-// void subWisdom(int value);
-
-// int getPridePoints();
-// void setPridePoints(int pride);
-// void addPridePoints(int value);
-// void subPridePoints(int value);
-
 class Player
 {
 public:
