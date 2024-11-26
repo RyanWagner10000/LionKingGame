@@ -3,10 +3,14 @@
 
 #include <string>
 
+// CUB_TRAINING = 0
+// STRIGHT_TO_PRIDE_LANDS = 1
+
 class Player
 {
 public:
     Player(int id, std::string name, int age, int strength, int stamina, int wisdom, int pride);
+    Player();
 
     int getPlayerID();
     void setPlayerID(int new_id);

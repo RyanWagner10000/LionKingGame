@@ -1,16 +1,18 @@
-#include "Board.h"
+#include <string>
+#include <iostream>
+#include <cstdlib> // For rand() and srand()
+#include <ctime>   // For time()
+
+#include "include/board.h"
 
 void Board::initializeBoard()
 {
     // Seed random number generator in your main function once
-    for(int i = 0; i < 2; i++)
+    for (int i = 0; i < 2; i++)
     {
         initializeTiles(i); // This ensures each lane has a unique tile distribution
     }
 }
-
-#include <cstdlib> // For rand() and srand()
-#include <ctime> // For time()
 
 void Board::initializeTiles(int player_index)
 {
@@ -18,21 +20,21 @@ void Board::initializeTiles(int player_index)
     int green_count = 0;
     int total_tiles = _BOARD_SIZE;
     // Keep track of green tile positions to ensure we place exactly 30 greens
-    for(int i = 0; i < total_tiles; i++)
+    for (int i = 0; i < total_tiles; i++)
     {
-        if(i == total_tiles - 1) 
+        if (i == total_tiles - 1)
         {
             // Set the last tile as Orange for "Pride Rock"
-            temp.color = 'O';
+            temp.setColor("Orange");
         }
-        else if(i == 0) 
+        else if (i == 0)
         {
-            // Set the last tile as Orange for "Pride Rock"
-            temp.color = 'Y';
+            // Set the last tile as Yellow for "Beginnning"
+            temp.setColor("Gray");
         }
-        else if(green_count < 30 && (rand() % (total_tiles - i) < 30 - green_count)) 
+        else if (green_count < 30 && (rand() % (total_tiles - i) < 30 - green_count))
         {
-            temp.color = 'G';
+            temp.setColor("Green");
             green_count++;
         }
         else
@@ -41,25 +43,25 @@ void Board::initializeTiles(int player_index)
             int color_choice = rand() % 5;
             switch (color_choice)
             {
-                case 0:
-                temp.color = 'B'; // Blue
+            case 0:
+                temp.setColor("Blue"); // Blue
                 break;
-                case 1:
-                temp.color = 'P'; // Pink
+            case 1:
+                temp.setColor("Pink"); // Pink
                 break;
-                case 2:
-                temp.color = 'N'; // Brown
+            case 2:
+                temp.setColor("Brown"); // Brown
                 break;
-                case 3:
-                temp.color = 'R'; // Red
+            case 3:
+                temp.setColor("Red"); // Red
                 break;
-                case 4:
-                temp.color = 'U'; // Purple
+            case 4:
+                temp.setColor("Purple"); // Purple
                 break;
             }
         }
-    // Assign the tile to the board for the specified lane
-    _tiles[player_index][i] = temp;
+        // Assign the tile to the board for the specified lane
+        _tiles[player_index][i] = temp;
     }
 }
 
@@ -69,12 +71,12 @@ Board::Board()
     // Initialize player position
     _player_position[0] = 0;
     // Initialize tiles
-    initializeTiles();
+    // initializeTiles();
 }
 
 Board::Board(int player_count)
 {
-    if(player_count > _MAX_PLAYERS)
+    if (player_count > _MAX_PLAYERS)
     {
         _player_count = _MAX_PLAYERS;
     }
@@ -83,7 +85,7 @@ Board::Board(int player_count)
         _player_count = player_count;
     }
     // Initialize player position
-    for(int i = 0; i < _player_count; i++)
+    for (int i = 0; i < _player_count; i++)
     {
         _player_position[i] = 0;
     }
@@ -91,128 +93,56 @@ Board::Board(int player_count)
     initializeBoard();
 }
 
-bool Board::isPlayerOnTile(int player_index, int pos)
+std::string Board::isPlayerOnTile(int path_index, int pos)
 {
-    if(_player_position[player_index] == pos)
+    std::string playersOnTile = "";
+    int len = sizeof(_player_position) / sizeof(_player_position[0]);
+
+    for (int i = 0; i < len; i++)
     {
-        return true;
+        if (_player_path[i] == path_index && _player_position[i] == pos)
+        {
+            playersOnTile.append(std::to_string(i + 1));
+            playersOnTile.append("&");
+        }
     }
-    return false;
+
+    if (playersOnTile.size() > 0)
+    {
+        playersOnTile.pop_back();
+    }
+
+    return playersOnTile;
 }
 
-void Board::displayTile(int player_index, int pos)
+void Board::displayTile(int path_index, int pos)
 {
     // string space = " ";
-    string color = "";
-    int player = isPlayerOnTile(player_index, pos);
+    std::string color = "";
+    std::string playersOnTile = isPlayerOnTile(path_index, pos);
     // Template for displaying a tile: <line filler space> <color start> |<player symbol or blank space>| ...continued below
     // <reset color> <line filler space> <endl>
     // Determine color to display
-    if(_tiles[player_index][pos].color == 'R')
+
+    color = _tiles[path_index][pos].getColor();
+
+    if (playersOnTile.size() > 0)
     {
-        color = RED;
-    }
-    else if(_tiles[player_index][pos].color == 'G')
-    {
-        color = GREEN;
-    }
-    else if(_tiles[player_index][pos].color == 'B')
-    {
-        color = BLUE;
-    }
-    else if(_tiles[player_index][pos].color == 'U')
-    {
-        color = PURPLE;
-    }
-    else if(_tiles[player_index][pos].color == 'N')
-    {
-        color = BROWN;
-    }
-    else if(_tiles[player_index][pos].color == 'P')
-    {
-        color = PINK;
-    }
-    else if(_tiles[player_index][pos].color == 'O')
-    {
-        color = ORANGE;
-    }
-    else if(_tiles[player_index][pos].color == 'Y')
-    {
-        color = GREY;
-    }
-    if(player == true)
-    {
-        cout << color << "|" << (player_index + 1) << "|" << RESET;
+        std::cout << color << "|" << playersOnTile << "|" << RESET;
     }
     else
     {
-        cout << color << "| |" << RESET;
+        std::cout << color << "| |" << RESET;
     }
 }
 
-void Board::displayTrack(int player_index)
+void Board::displayTrack(int path_index)
 {
-    for(int i = 0; i < _BOARD_SIZE; i++)
+    for (int i = 0; i < _BOARD_SIZE; i++)
     {
-        displayTile(player_index, i);void Board::displayTile(int player_index, int pos)
-        {
-            // string space = " ";
-            string color = "";
-            int player = isPlayerOnTile(player_index, pos);
-            // Template for displaying a tile: <line filler space> <color start> |<player symbol or blank space>| <reset color> <line filler space> <endl>
-            // Determine color to display
-            if(_tiles[player_index][pos].color == 'R')
-            {
-                color = RED;
-            }
-            else if(_tiles[player_index][pos].color == 'G')
-            {
-                color = GREEN;
-            }
-            else if(_tiles[player_index][pos].color == 'B')
-            {
-                color = BLUE;
-            }
-            else if(_tiles[player_index][pos].color == 'U')
-            {
-                color = PURPLE;
-            }
-            else if(_tiles[player_index][pos].color == 'N')
-            {
-                color = BROWN;
-            }
-            else if(_tiles[player_index][pos].color == 'P')
-            {
-                color = PINK;
-            }
-            else if(_tiles[player_index][pos].color == 'O')
-            {
-                color = ORANGE;
-            }
-            else if(_tiles[player_index][pos].color == 'Y')
-            {
-                color = GREY;
-            }
-            if(player == true)
-            {
-                cout << color << "|" << (player_index + 1) << "|" << RESET;
-            }
-            else
-            {
-                cout << color << "| |" << RESET;
-            }
-        
-        }
+        displayTile(path_index, i);
     }
-}
-
-void Board::displayTrack(int player_index)
-{
-    for(int i = 0; i < _BOARD_SIZE; i++)
-    {
-        displayTile(player_index, i);
-    }
-    cout << endl;
+    std::cout << std::endl;
 }
 
 void Board::displayBoard()
@@ -220,18 +150,18 @@ void Board::displayBoard()
     for (int i = 0; i < 2; i++)
     {
         displayTrack(i);
-        if (i == 0) 
+        if (i == 0)
         {
-            cout << endl; // Add an extra line between the two lanes
+            std::cout << std::endl; // Add an extra line between the two lanes
         }
     }
 }
 
-bool Board::movePlayer(int player_index)
+bool Board::movePlayer(int player_index, int move_amount)
 {
     // Increment player position
-    _player_position[player_index]++;
-    if(_player_position[player_index] == _BOARD_SIZE - 1)
+    _player_position[player_index] += move_amount;
+    if (_player_position[player_index] >= _BOARD_SIZE - 1)
     {
         // Player reached last tile
         return true;
@@ -241,15 +171,17 @@ bool Board::movePlayer(int player_index)
 
 int Board::getPlayerPosition(int player_index) const
 {
-    if(player_index >= 0 && player_index <= _player_count)
+    if (player_index >= 0 && player_index <= _player_count)
     {
         return _player_position[player_index];
     }
     return -1;
 }
 
-
-
+void Board::setPlayerPaths(int idx, int path)
+{
+    _player_path[idx] = path;
+}
 // Working on adding positions to track each character ie.. _ _ _ _ per each tile and have tiles better sorted for functionality of the
 // game
 

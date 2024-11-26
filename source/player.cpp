@@ -13,6 +13,10 @@ Player::Player(int id, std::string name, int age, int strength, int stamina, int
     setPridePoints(pride);
 }
 
+Player::Player() {
+    
+}
+
 int Player::getPlayerID()
 {
     return id;

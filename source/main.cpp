@@ -6,6 +6,7 @@
 #include <ctime>
 
 #include "include/player.h"
+#include "include/board.h"
 
 std::vector<std::string> characterInfo(int character_num)
 {
@@ -166,7 +167,7 @@ std::vector<Player> buildPlayerVector(int num_players)
                 std::vector<std::string> character_info = characterInfo(player_num);
 
                 // Create a new player object, let player pick their path, add it to the players vector
-                Player new_player(player_num, character_info[0], std::stoi(character_info[1]), std::stoi(character_info[2]), std::stoi(character_info[3]), std::stoi(character_info[4]), std::stoi(character_info[5]));
+                Player new_player(i, character_info[0], std::stoi(character_info[1]), std::stoi(character_info[2]), std::stoi(character_info[3]), std::stoi(character_info[4]), std::stoi(character_info[5]));
                 new_player.setPath(playerPickPath(new_player.getPlayerID()));
                 new_player.setTurnOrder(i);
                 players.push_back(new_player);
@@ -240,29 +241,34 @@ std::vector<Player> setPlayerTurnOrder(std::vector<Player> playerVect)
         same = false;
     }
 
-    std::cout << "Turn Order for players:" << std::endl;
+    std::vector<Player> new_player_order(playerVect.size());
+
     for (int i = 0; i < playerVect.size(); i++)
     {
         playerVect[i].setTurnOrder(vec[i]);
-        std::cout << "  Player " << playerVect[i].getPlayerID() << ": goes " << vec[i] << std::endl;
-    }
-    std::cout << std::endl;
-
-    // Reorder the Player vecotr from first turn to last turn. Makes it easier for game play loop
-    std::vector <Player> new_player_order;
-    for (int i = 0; i < playerVect.size(); i++) {
-        for (int j = 0; j < playerVect.size(); j++) {
-            if (playerVect[j].getTurnOrder() == i+1) {
-                new_player_order.push_back(playerVect[j]);
-                break;
-            }
-        }
+        new_player_order[vec[i] - 1] = playerVect[i];
     }
 
     std::cout << "Turn Order for players:" << std::endl;
     for (int i = 0; i < new_player_order.size(); i++)
     {
-        std::cout << "  Player " << new_player_order[i].getPlayerID() << ": goes " << new_player_order[i].getTurnOrder() << std::endl;
+        std::cout << "  Player " << new_player_order[i].getPlayerID() << ": goes " << new_player_order[i].getTurnOrder();
+        switch (new_player_order[i].getTurnOrder())
+        {
+        case 1:
+            std::cout << "st" << std::endl;
+            break;
+        case 2:
+            std::cout << "nd" << std::endl;
+            break;
+        case 3:
+            std::cout << "rd" << std::endl;
+            break;
+
+        default:
+            std::cout << "th" << std::endl;
+            break;
+        }
     }
     std::cout << std::endl;
 
@@ -278,6 +284,18 @@ int main()
     std::vector<Player> playerVect = buildPlayerVector(num_players);
 
     playerVect = setPlayerTurnOrder(playerVect);
+
+    // Let the game begin!!
+    std::cout << "Initializing Random Board Layout ...\n" << std::endl;
+
+    // Make Board object
+    Board theBoard(num_players);
+
+    for (int i = 0; i < num_players; i++) {
+        theBoard.setPlayerPaths(playerVect[i].getPlayerID(), playerVect[i].getPath());
+    }
+
+    theBoard.displayBoard();
 
     return 0;
 }
